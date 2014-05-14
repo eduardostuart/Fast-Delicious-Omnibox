@@ -14,7 +14,7 @@
   "version": "1.0",
   "manifest_version": 2,
   "omnibox": {
-    "keyword": "f"
+    "keyword": "bk"
   },
   "background": {
     "persistent": false,
