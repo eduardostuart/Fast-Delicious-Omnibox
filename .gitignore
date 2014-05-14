@@ -2,3 +2,6 @@
 *.sublime-workspace
 
 /node_modules/*
+
+*.pem
+*.crx
