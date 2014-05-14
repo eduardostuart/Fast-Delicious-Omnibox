@@ -12,6 +12,7 @@ To use Fast Delicious Omnibox, type “bk”, press tab, and then type your sear
 bk [tab or space] [search query]
 ```
 
-## How to install
 
-1. Chrome Web Store - (soon)
+## Author
+
+[Eduardo Stuart](http://twitter.com/eduardostuart)
