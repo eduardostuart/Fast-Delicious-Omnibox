@@ -3,6 +3,7 @@
   "author":"Eduardo Stuart",
   "permissions":[
     "tabs",
+    "storage",
     "*://*.delicious.com/*"
   ],
   "icons":{

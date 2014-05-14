@@ -19,20 +19,31 @@
             'error':function(){
 
             },
-            'success':function(success){
+            'success':function(response){
 
-                if( typeof success !== 'object' ) return;
+                if( typeof response !== 'object' ) return;
 
-                var _results = success.pkg || [];
+                if( response.status === 'expired_session' ){
+
+                    suggest([{
+                        content: 'http://delicious.com',
+                        description: 'To use Fast Delicious Omnibox, <mark>you need to authenticate</mark>.'
+                    }]);
+
+                    return;
+                }
+
+                var _results = response.pkg || [];
                 var _suggest = [];
 
                 $.each( _results , function(i,v){
 
-                    var $result = this;
+                    var $result = this,
+                        _tags   = ( $result.tags ? ' / tags: ' + $result.tags.join(',') : '' );
 
                     _suggest.push({
                         content: $result.url,
-                        description: $result.title
+                        description: $result.title + _tags
                     });
                 });
 
@@ -41,11 +52,11 @@
         });
     };
 
+    var suggest
+
     App.prototype.onInputChanged = function(text,suggest){
 
         text = escape( $.trim( text ) );
-
-        if( text.length < 3 ) return;
 
         var _url = options.api.url;
 
@@ -62,6 +73,12 @@
 
 
     App.prototype.onInputEnteredListener = function(url){
+
+        if( !/^http/ig.test(url) ){
+            url = 'http://delicious.com';
+        }
+
+
         chrome.tabs.getSelected(null,function(tab){
             chrome.tabs.update( tab.id , {url: url});
         });
