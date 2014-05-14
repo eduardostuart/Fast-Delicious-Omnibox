@@ -1,0 +1,17 @@
+{
+  "name": "Fast Delicious Omnibox",
+  "version": "1.0.0",
+  "description": "Fast Delicious Omnibox lets you search through your Delicious links from any Web page, via the Omnibox.",
+  "author": "Eduardo Stuart",
+  "devDependencies": {
+    "grunt": "0.4.1",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-clean": "^0.5.0",
+    "time-grunt": "^0.3.1",
+    "load-grunt-tasks": "^0.4.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-jshint": "^0.10.0"
+  }
+}

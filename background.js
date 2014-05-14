@@ -80,18 +80,20 @@
 
         text = $.trim( text );
 
-        var _url = options.api.url, params = [];
+        var _url = options.api.url;
+        var params = {
+            tags: '',
+            keywords : escape(text),
+            tagsor:false,
+            limit:options.api.limit,
+            anchorx:'',
+            index:0,
+            inclpriv:1,
+            bundle_name:'',
+            has_all:true,
+            exclude_zeen:true
+        };
 
-        params['tags']     = '';
-        params['keywords'] = escape(text);
-        params['tagsor']   = false;
-        params['limit']    = options.api.limit;
-        params['anchorx']  = '';
-        params['index']    = 0;
-        params['inclpriv'] = 1;
-        params['bundle_name'] = '';
-        params['has_all']   = true;
-        params['exclude_zeen'] = true;
 
         _url = buildUrl( _url , params );
 
