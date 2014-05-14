@@ -2,7 +2,7 @@
 
     var options = {
         api:{
-            url:'https://avosapi.delicious.com/api/v1/posts/you/time?tags=%tags%&keywords=%keyword%&tagsor=false&limit=%limit%&anchorx=&index=0&inclpriv=1&bundle_name=undefined&has_all=true&exclude_zeen=true&visibility',
+            url:'https://avosapi.delicious.com/api/v1/posts/you/time',
             limit: 10
         }
     };
@@ -11,13 +11,18 @@
 
     var App = function(){};
 
-    var searchAndSuggest = function(url , suggest ){
+    var searchAndSuggest = function(text, url , suggest ){
         $.ajax({
             'url':url,
             'cached':true,
             'dataType':'json',
             'error':function(){
 
+            },
+            'beforeSend':function(){
+                chrome.omnibox.setDefaultSuggestion({
+                    description: 'Searching bookmark with keywords: <match>'+text+'</match>'
+                });
             },
             'success':function(response){
 
@@ -27,7 +32,7 @@
 
                     suggest([{
                         content: 'http://delicious.com',
-                        description: 'To use Fast Delicious Omnibox, <mark>you need to authenticate</mark>.'
+                        description: 'To use Fast Delicious Omnibox, <match>you need to authenticate.</match> - <dim>http://delicious.com</dim>'
                     }]);
 
                     return;
@@ -36,14 +41,20 @@
                 var _results = response.pkg || [];
                 var _suggest = [];
 
+                if( _results.length < 1 ){
+                    return;
+                }
+
                 $.each( _results , function(i,v){
 
-                    var $result = this,
-                        _tags   = ( $result.tags ? ' / tags: ' + $result.tags.join(',') : '' );
+                    var $result      = this,
+                        _tags        = ( $result.tags ? ' / tags: ' + $result.tags.join(',') : '' ),
+                        _pattern     = new RegExp(text,'igm');
+                        _description = $result.title.replace(_pattern,'<match>'+text+'</match>');
 
                     _suggest.push({
                         content: $result.url,
-                        description: $result.title + _tags
+                        description: _description
                     });
                 });
 
@@ -52,22 +63,43 @@
         });
     };
 
-    var suggest
+    var buildUrl = function(url,parameters){
+        var qs = "";
+        for(var key in parameters) {
+            var value = parameters[key];
+            qs += encodeURIComponent(key) + "=" + encodeURIComponent(value) + "&";
+        }
+        if (qs.length > 0){
+            qs = qs.substring(0, qs.length-1); //chop off last "&"
+            url = url + "?" + qs;
+        }
+        return url;
+    };
 
     App.prototype.onInputChanged = function(text,suggest){
 
-        text = escape( $.trim( text ) );
+        text = $.trim( text );
 
-        var _url = options.api.url;
+        var _url = options.api.url, params = [];
 
-        _url = _url.replace('%keyword%', text );
-        _url = _url.replace('%tags%','');
-        _url = _url.replace('%limit%',options.api.limit);
+        params['tags']     = '';
+        params['keywords'] = escape(text);
+        params['tagsor']   = false;
+        params['limit']    = options.api.limit;
+        params['anchorx']  = '';
+        params['index']    = 0;
+        params['inclpriv'] = 1;
+        params['bundle_name'] = '';
+        params['has_all']   = true;
+        params['exclude_zeen'] = true;
+
+        _url = buildUrl( _url , params );
+
 
         clearTimeout(t);
 
         t = setTimeout(function(){
-            searchAndSuggest( _url , suggest );
+            searchAndSuggest( text, _url , suggest );
         },50);
     };
 
@@ -75,9 +107,8 @@
     App.prototype.onInputEnteredListener = function(url){
 
         if( !/^http/ig.test(url) ){
-            url = 'http://delicious.com';
+            return;
         }
-
 
         chrome.tabs.getSelected(null,function(tab){
             chrome.tabs.update( tab.id , {url: url});
