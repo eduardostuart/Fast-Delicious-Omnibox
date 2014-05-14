@@ -57,7 +57,7 @@
 
         t = setTimeout(function(){
             searchAndSuggest( _url , suggest );
-        },100);
+        },50);
     };
 
 
