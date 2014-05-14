@@ -48,7 +48,6 @@
                 $.each( _results , function(i,v){
 
                     var $result      = this,
-                        _tags        = ( $result.tags ? ' / tags: ' + $result.tags.join(',') : '' ),
                         _pattern     = new RegExp(text,'igm');
                         _description = $result.title.replace(_pattern,'<match>'+text+'</match>');
 
@@ -63,6 +62,7 @@
         });
     };
 
+    // thanks to http://stackoverflow.com/a/5340658/781251
     var buildUrl = function(url,parameters){
         var qs = "";
         for(var key in parameters) {
